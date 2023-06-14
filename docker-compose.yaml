@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  users:
+    container_name: users
+    build:
+      context: .
+      dockerfile: ./deployment/Dockerfile
+    command: uvicorn api.main:app --reload --host 0.0.0.0 --port 9000
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app:cached
+    ports:
+      - 9000:9000
+    stdin_open: true
+    tty: true
