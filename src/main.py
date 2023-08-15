@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .v1 import routers
+from api.v1 import routers
 from config import settings
 
 
