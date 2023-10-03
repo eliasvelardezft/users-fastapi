@@ -14,7 +14,9 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = os.getenv("DB_USER", "postgres")
     DB_SERVER: str = os.getenv("DB_USER", "localhost")
     DB_PORT: str = os.getenv("DB_USER", "5432")
-    DB_NAME: str = os.getenv("DB_USER", "usersdb")
+    DB_NAME: str = os.getenv("DB_USER", "users")
+
+    DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}:{DB_PORT}/{DB_NAME}"
 
 
 @lru_cache()
