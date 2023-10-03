@@ -9,6 +9,7 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.PROJECT_VERSION,
     openapi_url=settings.OPEN_API_URL,
+    docs_url="/api/v1/docs",
 )
 app.add_middleware(
     CORSMiddleware,
@@ -19,4 +20,4 @@ app.add_middleware(
 )
 
 # routers
-app.include_router(routers.router, prefix="/api/v1", tags=["v1"])
+app.include_router(routers.router, prefix="/api/v1")

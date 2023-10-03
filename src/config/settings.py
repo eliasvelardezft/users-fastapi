@@ -7,7 +7,7 @@ from pydantic import BaseSettings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "users"
     PROJECT_VERSION: str = "0.1.0"
-    OPEN_API_URL: str = "/openapi.json"
+    OPEN_API_URL: str = "/api/v1/openapi.json"
 
     # database
     DB_USER: str = os.getenv("DB_USER", "postgres")
