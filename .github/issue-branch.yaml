@@ -1,0 +1,28 @@
+branchName: 'issue-${issue.number%4}-${issue.title[0,13],}'
+gitSafeReplacementChar: '-'
+conventionalPrTitles: true
+conventionalStyle: semver
+autoCloseIssue: true
+openDraftPR: true
+copyIssueDescriptionToPR: true
+copyIssueLabelsToPR: true
+copyIssueAssigneeToPR: true
+prSkipCI: true
+commentMessage: 'branch `${branchName}` created for issue: ${issue.title}\nIssue url ${issue.url}'
+
+branches:
+  - label: bug
+    prefix: fix/
+  - label: feature
+    prefix: feature/
+  - label: docs
+    prefix: docs/
+  - label: refactor
+    prefix: refactor/
+  - label: test
+    prefix: test/
+  - label: '*'
+    prefix: issue/
+
+  - label: question
+    skip: true
