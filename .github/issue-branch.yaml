@@ -8,7 +8,7 @@ copyIssueDescriptionToPR: true
 copyIssueLabelsToPR: true
 copyIssueAssigneeToPR: true
 prSkipCI: true
-commentMessage: 'branch `${branchName}` created for issue: ${issue.title}\nIssue url ${issue.url}'
+commentMessage: "branch `${branchName}` created for issue: ${issue.title}\nIssue url ${issue.url}"
 
 branches:
   - label: bug
