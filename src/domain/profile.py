@@ -1,11 +1,10 @@
-from dataclasses import dataclass, field
-
-from .data_objects import RoleName
-from .permission import Permission
+from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass
 class Profile:
     id: int | None = None
-    name: RoleName
-    permissions: list[Permission] = field(default_factory=list)
+    first_name: str | None = None
+    last_name: str | None = None
+    birthdate: datetime | None = None
