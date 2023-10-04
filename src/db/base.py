@@ -31,7 +31,10 @@ class SQLBaseModel(Base):
         default=datetime.utcnow,
         onupdate=datetime.utcnow
     )
-    deleted_date: datetime = Column(DateTime(timezone=True))
+    deleted_date: datetime = Column(
+        DateTime(timezone=True),
+        index=True
+    )
 
 
 @event.listens_for(SQLBaseModel, "before_update", propagate=True)
