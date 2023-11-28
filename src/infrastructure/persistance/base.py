@@ -51,7 +51,7 @@ def updated_at(mapper, connection, target):
     target.updated_at = datetime.utcnow()
 
 
-engine = create_engine(settings.DATABASE_URL)
+engine = create_engine(settings.DB_URL)
 SessionLocal = sessionmaker(bind=engine)
 
 

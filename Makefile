@@ -51,8 +51,8 @@ clean:
 build: ## build the server
 	docker compose build
 
-.PHONY: run
-run: ## Starts the server in the background
+.PHONY: up
+up: ## Starts the server in the background
 	docker compose up -d
 
 .PHONY: dock
@@ -81,7 +81,7 @@ rollback-all: ## Rollback all migrations
 
 .PHONY: psql
 psql: ## Connect to the database
-	docker exec -it $(PSQL_CONTAINER_NAME) psql -U postgres -d users
+	docker exec -it $(PSQL_CONTAINER_NAME) psql -U postgres -d postgres
 
 .PHONY: generate-migration 
 generate-migration: ## Generate a new migration

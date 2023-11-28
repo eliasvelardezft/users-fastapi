@@ -1,17 +1,18 @@
-from sqlalchemy import String, Integer, ForeignKey, Table
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Integer, ForeignKey, Table, Column
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from infrastructure.persistance.base import SQLBaseModel
+from infrastructure.persistance.models import PermissionSQL
 
 
 role_permission_association = Table(
     'role_permission', SQLBaseModel.metadata,
-    mapped_column('role_id', Integer, ForeignKey('role.id')),
-    mapped_column('permission_id', Integer, ForeignKey('permission.id'))
+    Column('role_id', Integer, ForeignKey('role.id')),
+    Column('permission_id', Integer, ForeignKey('permission.id'))
 )
 
 
-class Role(SQLBaseModel):
+class RoleSQL(SQLBaseModel):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True, index=True)
-    permissions: Mapped = relationship("Permission", secondary=role_permission_association)
+    permissions: Mapped[list[PermissionSQL]] = relationship("Permission", secondary=role_permission_association)
