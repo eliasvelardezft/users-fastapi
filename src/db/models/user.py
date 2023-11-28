@@ -19,7 +19,4 @@ class User(Base):
     created_date: Mapped[str] = mapped_column(DateTime)
     active: Mapped[bool] = mapped_column(bool, default=True)
 
-    profile_id: Mapped[int] = mapped_column(Integer, ForeignKey('profile.id'))
-    profile: Mapped = relationship("Profile", back_populates="user")
-
     roles: Mapped = relationship("Role", secondary=user_role_association)
