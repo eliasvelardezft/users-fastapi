@@ -1,7 +1,7 @@
 from functools import lru_cache
 import os
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     DB_PORT: str = os.getenv("DB_USER", "5432")
     DB_NAME: str = os.getenv("DB_USER", "users")
 
-    DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}:{DB_PORT}/{DB_NAME}"
+    DB_URL: str = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}:{DB_PORT}/{DB_NAME}"
 
 
 @lru_cache()

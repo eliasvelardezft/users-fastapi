@@ -1,16 +1,23 @@
-from pydantic import BaseModel, validator, Field
+from datetime import datetime
 
-from domain.data_objects import RoleName
+from pydantic import BaseModel, validator
+
+from api.v1.dtos import UpdateDTOMixin
+from domain.models.value_objects import Name, Description
 
 
 class RoleBase(BaseModel):
     name: str
-    description: str = Field(..., max_length=200)
+    description: str
     permissions: list[int] = []
 
-    @validator
+    @validator("name")
     def validate_name(cls, value: str) -> str:
-        return RoleName(value).value
+        return Name(value=value).value
+
+    @validator("description")
+    def validate_description(cls, value: str) -> str:
+        return Description(value=value).value
 
 
 class RoleCreate(RoleBase):
@@ -20,11 +27,12 @@ class RoleCreate(RoleBase):
 class RoleRead(RoleBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    created_date: datetime
+    updated_date: datetime
+    deleted_date: datetime | None = None
+
+    model_config = {"from_attributes": True}
 
 
-class RoleUpdate(RoleBase):
-    name: str | None = None
-    description: str | None = Field(max_length=200)
-    permissions: list[int] | None = None
+class RoleUpdate(RoleBase, UpdateDTOMixin):
+    pass

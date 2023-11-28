@@ -2,8 +2,9 @@ from datetime import datetime
 
 from pydantic import BaseModel, validator
 
-from domain.data_objects import Email, Password, UserName
-from .role import RoleRead
+from domain.models.value_objects import Email, Password, Username
+from api.v1.dtos import UpdateDTOMixin
+from api.v1.dtos.role import RoleRead
 
 
 class UserBase(BaseModel):
@@ -15,15 +16,15 @@ class UserBase(BaseModel):
 
     @validator("email")
     def email_validator(cls, value: str) -> str:
-        return Email(value).value
+        return Email(value=value).value
 
     @validator("password")
     def password_validator(cls, value: str) -> str:
-        return Password(value).value
+        return Password(value=value).value
     
     @validator("username")
     def username_validator(cls, value: str) -> str:
-        return UserName(value).value
+        return Username(value=value).value
 
 
 class UserCreate(UserBase):
@@ -33,22 +34,14 @@ class UserCreate(UserBase):
 class UserRead(BaseModel):
     id: int
 
-    email: str
-    username: str
-    active: bool
-
     created_date: datetime
     updated_date: datetime
-    deleted_date: datetime
+    deleted_date: datetime | None = None
 
     roles: list[RoleRead] = []
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}
 
 
-class UserUpdate(UserBase):
-    email: str | None = None
-    password: str | None = None
-    username: str | None = None
-    active: bool | None = None
+class UserUpdate(UserBase, UpdateDTOMixin):
+    pass

@@ -1,15 +1,22 @@
-from pydantic import BaseModel, validator, Field
+from datetime import datetime
 
-from domain.data_objects import PermissionName
+from pydantic import BaseModel, validator
+
+from api.v1.dtos import UpdateDTOMixin
+from domain.models.value_objects import Name, Description
 
 
 class PermissionBase(BaseModel):
     name: str
-    description: str = Field(max_length=200)
+    description: str
 
     @validator("name")
     def validate_name(cls, value: str) -> str:
-        return PermissionName(value).value
+        return Name(value).value
+
+    @validator("description")
+    def validate_description(cls, value: str) -> str:
+        return Description(value).value
 
 
 class PermissionCreate(PermissionBase):
@@ -19,9 +26,12 @@ class PermissionCreate(PermissionBase):
 class PermissionRead(PermissionBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    created_date: datetime
+    updated_date: datetime
+    deleted_date: datetime | None = None
+
+    model_config = {"from_attributes": True}
 
 
-class PermissionUpdate(PermissionBase):
-    name: str | None = None
+class PermissionUpdate(PermissionBase, UpdateDTOMixin):
+    pass
