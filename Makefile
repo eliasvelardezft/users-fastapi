@@ -36,10 +36,6 @@ targets:
 # Development targets
 # -------------
 
-
-.PHONY: run
-run: start
-
 .PHONY: clean ## Delete all temporary files
 clean:
 	sudo rm -rf .ipynb_checkpoints
@@ -55,13 +51,13 @@ clean:
 build: ## build the server
 	docker compose build
 
+.PHONY: run
+run: ## Starts the server in the background
+	docker compose up -d
+
 .PHONY: dock
 dock: ## Starts the server
 	docker compose up -d && docker attach $(CONTAINER_NAME)
-
-.PHONY: up
-up: ## Starts the server without detaching
-	docker compose up
 
 .PHONY: down
 down: ## Stops the server
@@ -70,10 +66,6 @@ down: ## Stops the server
 .PHONY: shell
 shell: ## container shell
 	docker exec -it $(CONTAINER_NAME) sh -c "clear; (bash || ash || sh)"
-
-.PHONY: attach
-attach: ## attach container 
-	docker attach $(CONTAINER_NAME)
 
 .PHONY: migrate
 migrate: ## Run the migrations
@@ -102,4 +94,4 @@ generate-migration: ## Generate a new migration
 
 .PHONY: test
 test: ## Run the all tests 
-	docker exec -it $(CONTAINER_NAME) pytest test
+	docker exec -it $(CONTAINER_NAME) pytest -s
