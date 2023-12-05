@@ -1,23 +1,22 @@
 from datetime import datetime
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 from api.v1.dtos import UpdateDTOMixin
-from domain.models.value_objects import Name, Description
+from domain.models.value_objects import Name, Id
 
 
 class RoleBase(BaseModel):
     name: str
-    description: str
     permissions: list[int] = []
 
-    @validator("name")
+    @field_validator("name")
     def validate_name(cls, value: str) -> str:
         return Name(value=value).value
 
-    @validator("description")
-    def validate_description(cls, value: str) -> str:
-        return Description(value=value).value
+    @field_validator("permissions")
+    def validate_permissions(cls, value: list[int]) -> list[int]:
+        return [Id(value=permission_id).value for permission_id in value]
 
 
 class RoleCreate(RoleBase):
