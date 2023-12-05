@@ -16,6 +16,8 @@ pytest = "^7.4.3"
 pydantic-settings = "^2.1.0"
 pydantic = {extras = ["email"], version = "^2.5.2"}
 psycopg2-binary = "^2.9.9"
+httpx = "^0.25.2"
+ipdb = "^0.13.13"
 
 
 [build-system]
