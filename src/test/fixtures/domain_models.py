@@ -1,3 +1,4 @@
+from datetime import datetime
 import pytest
 
 from domain.models.user import User
@@ -19,6 +20,8 @@ def domain_permission():
         id=Id(value=1),
         name=Name(value="testpermission"),
         description=Description(value="testdescription"),
+        created_date=datetime.now(),
+        updated_date=datetime.now(),
     )
 
 
@@ -28,6 +31,8 @@ def domain_role():
         id=Id(value=1),
         name=Name(value="testrole"),
         permission_ids=[Id(value=1), Id(value=2)],
+        created_date=datetime.now(),
+        updated_date=datetime.now(),
     )
 
 
@@ -40,4 +45,6 @@ def domain_user():
         id=Id(value=1),
         active=True,
         role_ids=[Id(value=1), Id(value=2)],
+        created_date=datetime.now(),
+        updated_date=datetime.now(),
     )
