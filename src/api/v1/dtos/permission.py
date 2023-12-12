@@ -12,11 +12,11 @@ class PermissionBase(BaseModel):
 
     @field_validator("name")
     def validate_name(cls, value: str) -> str:
-        return Name(value).value
+        return Name(value=value).value
 
     @field_validator("description")
     def validate_description(cls, value: str) -> str:
-        return Description(value).value
+        return Description(value=value).value
 
 
 class PermissionCreate(PermissionBase):
