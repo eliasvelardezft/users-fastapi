@@ -28,8 +28,10 @@ def test_session(sql_engine) -> Generator[Session, None, None]:
     connection.close()
 
 
-def seed_db(test_session: Session, records: list[Base]):
-    for record in records:
-        test_session.add(record)
-    test_session.commit()
-    test_session.refresh()
+def seed_db(test_session: Session, records: list[Base], bulk: bool = False):
+    if not bulk:
+        for record in records:
+            test_session.add(record)
+            test_session.commit()
+            test_session.refresh(record)
+    # TODO: implement bulk without commiting for each record.
