@@ -5,7 +5,7 @@ from sqlalchemy import event, DateTime, Column, create_engine, inspect
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import DeclarativeBase, Mapped, sessionmaker
 
-from config import settings
+from infrastructure.config import settings
 
 
 def camel_to_snake(name):

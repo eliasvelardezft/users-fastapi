@@ -1,10 +1,11 @@
-from attrs import define, field
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from .value_objects import Username, Password, Email, Id
 from .role import Role
 
-@define
+
+@dataclass(kw_only=True)
 class User:
     id: Id | None = None
 
@@ -12,7 +13,8 @@ class User:
     username: Username
     password: Password
     email: Email
-    roles: list[Role] = field(default_factory=[])
+    roles: list[Role] = field(default_factory=list)
+    role_ids: list[Id] = field(default_factory=list)
 
     created_date: datetime | None = None
     updated_date: datetime | None = None
