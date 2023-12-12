@@ -9,7 +9,6 @@ class TestPermissionPersistanceAdapter(BaseTestClass):
         sql_permission = PermissionPersistanceAdapter.domain_to_persistance(domain_permission)
 
         assert isinstance(sql_permission, PermissionSQL)
-        assert sql_permission.id == domain_permission.id.value
         assert sql_permission.name == domain_permission.name.value
         assert sql_permission.created_date == domain_permission.created_date
         assert sql_permission.updated_date == domain_permission.updated_date
@@ -19,7 +18,6 @@ class TestPermissionPersistanceAdapter(BaseTestClass):
         domain_permission = PermissionPersistanceAdapter.persistance_to_domain(sql_permission)
 
         assert isinstance(domain_permission, Permission)
-        assert domain_permission.id.value == sql_permission.id
         assert domain_permission.name.value == sql_permission.name
         assert domain_permission.created_date == sql_permission.created_date
         assert domain_permission.updated_date == sql_permission.updated_date

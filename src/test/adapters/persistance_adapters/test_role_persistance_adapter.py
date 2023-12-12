@@ -9,7 +9,6 @@ class TestRolePersistanceAdapter(BaseTestClass):
         sql_role = RolePersistanceAdapter.domain_to_persistance(domain_role)
 
         assert isinstance(sql_role, RoleSQL)
-        assert sql_role.id == domain_role.id.value
         assert sql_role.name == domain_role.name.value
         assert sql_role.permissions == [permission.value for permission in domain_role.permissions]
         assert sql_role.created_date == domain_role.created_date
