@@ -10,7 +10,6 @@ class PermissionPersistanceAdapter(IPersistanceAdapter):
         permission: Permission,
     ) -> PermissionSQL:
         return PermissionSQL(
-            id=permission.id.value,
             name=permission.name.value,
             description=permission.description.value,
             created_date=permission.created_date,

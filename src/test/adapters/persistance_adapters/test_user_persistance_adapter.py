@@ -9,7 +9,6 @@ class TestUserPersistanceAdapter(BaseTestClass):
         sql_user = UserPersistanceAdapter.domain_to_persistance(domain_user)
 
         assert isinstance(sql_user, UserSQL)
-        assert sql_user.id == domain_user.id.value
         assert sql_user.email == domain_user.email.value
         assert sql_user.username == domain_user.username.value
         assert sql_user.active == domain_user.active

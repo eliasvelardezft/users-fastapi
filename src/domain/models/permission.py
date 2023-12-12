@@ -6,7 +6,7 @@ from .value_objects import Name, Id, Description
 
 @dataclass(kw_only=True)
 class Permission:
-    id: Id
+    id: Id | None = None
     name: Name
     description: Description
 

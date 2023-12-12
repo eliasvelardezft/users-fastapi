@@ -7,7 +7,7 @@ from .permission import Permission
 
 @dataclass(kw_only=True)
 class Role:
-    id: Id
+    id: Id | None = None
     name: Name
     permissions: list[Permission] = field(default_factory=list)
     permission_ids: list[Id] = field(default_factory=list)

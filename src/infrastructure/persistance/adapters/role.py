@@ -11,9 +11,8 @@ class RolePersistanceAdapter(IPersistanceAdapter):
         role: Role,
     ) -> RoleSQL:
         return RoleSQL(
-            id=role.id.value,
             name=role.name.value,
-            permission_ids=role.permission_ids,
+            permission_ids=[id.value for id in role.permission_ids],
             created_date=role.created_date,
             updated_date=role.updated_date,
             deleted_date=role.deleted_date,
@@ -30,7 +29,7 @@ class RolePersistanceAdapter(IPersistanceAdapter):
         return Role(
             id=Id(value=role.id),
             name=Name(value=role.name),
-            permission_ids=role.permission_ids,
+            permission_ids=[Id(value=permission_id) for permission_id in role.permission_ids],
             permissions=domain_permissions,
             created_date=role.created_date,
             updated_date=role.updated_date,

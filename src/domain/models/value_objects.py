@@ -10,11 +10,11 @@ class Password(BaseModel):
 
 
 class Username(BaseModel):
-    value: str = Field(min_length=2, max_length=20)
+    value: str = Field(min_length=2, max_length=30)
 
 
 class Name(BaseModel):
-    value: str = Field(min_length=1, max_length=20)
+    value: str = Field(min_length=1, max_length=30)
 
 
 class Id(BaseModel):
