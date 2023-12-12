@@ -11,7 +11,6 @@ class UserPersistanceAdapter(IPersistanceAdapter):
         user: User,
     ) -> UserSQL:
         return UserSQL(
-            id=user.id.value,
             active=user.active,
             username=user.username.value,
             password=user.password.value,
