@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from config import settings
+from infrastructure.config import settings
 from infrastructure.persistance.base import SQLBaseModel
 from infrastructure.persistance.models import *
 
