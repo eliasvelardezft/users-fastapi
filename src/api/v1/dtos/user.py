@@ -10,6 +10,7 @@ from api.v1.dtos.role import RoleRead
 class UserBase(BaseModel):
     email: str
     username: str
+    active: bool = True
 
     role_ids: list[int] = []
 
@@ -48,7 +49,7 @@ class UserRead(UserBase):
 
 
 class UserUpdate(UserBase, UpdateDTOMixin):
-    password: str
+    password: str | None = None
 
     @field_validator("password")
     def password_validator(cls, value: str) -> str:

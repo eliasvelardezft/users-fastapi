@@ -19,3 +19,9 @@ class RoleService:
 
     def get_role(self, id: str) -> Role | None:
         return self.repository.get(id=id)
+
+    def update_role(self, id: str, role: Role) -> Role:
+        return self.repository.update(id=id, data=role)
+
+    def delete_role(self, id: str) -> Any:
+        return self.repository.delete(id=id)

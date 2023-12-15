@@ -1,4 +1,7 @@
-from pydantic import BaseModel, Field, EmailStr, field_validator
+from enum import Enum
+from datetime import datetime
+
+from pydantic import BaseModel, Field, EmailStr, field_validator, model_validator
 
 
 class Email(BaseModel):
@@ -35,3 +38,36 @@ class Id(BaseModel):
 
 class Description(BaseModel):
     value: str = Field(min_length=1, max_length=200)
+
+
+class ComparisonOperator(str, Enum):
+    EQ = "="
+    NEQ = "!="
+    GT = ">"
+    GTE = ">="
+    LT = "<"
+    LTE = "<="
+
+
+class ComparisonFieldFilter(BaseModel):
+    value: int | datetime | str
+    comparison_operator: ComparisonOperator
+
+
+class RangeFieldFilter(BaseModel):
+    start: int | datetime | str
+    end: int | datetime | str
+
+    @model_validator(mode="after")
+    def validate_same_type(cls, obj):
+        start, end = obj.start, obj.end
+        if type(start) != type(end):
+            raise ValueError("Start and end must be the same type")
+        return obj
+
+
+class QueryFilters(BaseModel):
+    filters: dict[
+        str,
+        ComparisonFieldFilter | RangeFieldFilter | dict[str, ComparisonFieldFilter]
+    ] = {}
