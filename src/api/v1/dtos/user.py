@@ -9,33 +9,34 @@ from api.v1.dtos.role import RoleRead
 
 class UserBase(BaseModel):
     email: str
-    password: str
     username: str
+    active: bool = True
 
-    roles: list[int] = []
+    role_ids: list[int] = []
 
     @field_validator("email")
     def email_validator(cls, value: str) -> str:
         return Email(value=value).value
 
-    @field_validator("password")
-    def password_validator(cls, value: str) -> str:
-        return Password(value=value).value
     
     @field_validator("username")
     def username_validator(cls, value: str) -> str:
         return Username(value=value).value
 
-    @field_validator("roles")
-    def roles_validator(cls, value: list[int]) -> list[int]:
+    @field_validator("role_ids")
+    def role_ids_validator(cls, value: list[int]) -> list[int]:
         return [Id(value=role_id).value for role_id in value]
 
 
 class UserCreate(UserBase):
-    pass
+    password: str
+
+    @field_validator("password")
+    def password_validator(cls, value: str) -> str:
+        return Password(value=value).value
 
 
-class UserRead(BaseModel):
+class UserRead(UserBase):
     id: int
 
     created_date: datetime
@@ -43,10 +44,13 @@ class UserRead(BaseModel):
     deleted_date: datetime | None = None
 
     roles: list[RoleRead] = []
-    role_ids: list[int] = []
 
     model_config = {"from_attributes": True}
 
 
 class UserUpdate(UserBase, UpdateDTOMixin):
-    pass
+    password: str | None = None
+
+    @field_validator("password")
+    def password_validator(cls, value: str) -> str:
+        return Password(value=value).value

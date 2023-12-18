@@ -1,7 +1,7 @@
 import pytest
 
 from domain.models.role import Role
-from domain.models.value_objects import Name, Id
+from domain.models.value_objects import Name, Id, ComparisonOperator, QueryFilters
 from domain.exceptions import InvalidFilter
 from infrastructure.persistance.repositories.role import RoleRepository
 from test.conftest import BaseTestClass
@@ -23,10 +23,18 @@ class TestRoleRepository(BaseTestClass):
     def test_filter(self, test_role_repository: RoleRepository):
         self._load_test_data()
 
-        roles = test_role_repository.filter(
-            filters={
-                "name": "testrole_2",
+        filters_dict = {
+            "filters": {
+                "name": {
+                    "value": "testrole_2",
+                    "comparison_operator": ComparisonOperator.EQ,
+                }
             }
+        }
+        filters = QueryFilters.model_validate(filters_dict)
+
+        roles = test_role_repository.filter(
+            filters=filters
         )
         assert len(roles) == 1
         assert roles[0].id == Id(value=2)
@@ -36,25 +44,61 @@ class TestRoleRepository(BaseTestClass):
     def test_filter_by_user_id(self, test_role_repository: RoleRepository):
         self._load_test_data()
 
+        filters_dict = {
+            "filters": {
+                "user": {
+                    "id": {
+                        "value": 1,
+                        "comparison_operator": ComparisonOperator.EQ,
+                    }
+                }
+            }
+        }
+        filters = QueryFilters.model_validate(filters_dict)
+
         roles = test_role_repository.filter(
-            filters={"user": {"id": 1}},
+            filters=filters,
         )
         assert len(roles) == 2
 
     def test_filter_by_user_email(self, test_role_repository: RoleRepository):
         self._load_test_data()
 
+        filters_dict = {
+            "filters": {
+                "user": {
+                    "email": {
+                        "value": "liomessi@gmail.com",
+                        "comparison_operator": ComparisonOperator.EQ,
+                    }
+                }
+            }
+        }
+        filters = QueryFilters.model_validate(filters_dict)
+
         roles = test_role_repository.filter(
-            filters={"user": {"email": "liomessi@gmail.com"}},
+            filters=filters,
         )
         assert len(roles) == 2
 
     def test_invalid_filter(self, test_role_repository: RoleRepository):
         self._load_test_data()
 
+        filters_dict = {
+            "filters": {
+                "user": {
+                    "invalid_field": {
+                        "value": "liomessi@gmail.com",
+                        "comparison_operator": ComparisonOperator.EQ,
+                    }
+                }
+            }
+        }
+        filters = QueryFilters.model_validate(filters_dict)
+
         with pytest.raises(InvalidFilter):
             test_role_repository.filter(
-                filters={"invalid": "invalid"},
+                filters=filters,
             )
 
     def test_get(self, test_role_repository: RoleRepository):

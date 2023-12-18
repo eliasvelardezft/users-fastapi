@@ -1,5 +1,12 @@
 from domain.models.user import User
-from domain.models.value_objects import Email, Id, Username, Password
+from domain.models.value_objects import (
+    Email,
+    Id,
+    Username,
+    Password,
+    ComparisonOperator,
+    QueryFilters,
+)
 from infrastructure.persistance.repositories.user import UserRepository
 from test.conftest import BaseTestClass
 
@@ -19,10 +26,18 @@ class TestUserRepository(BaseTestClass):
     def test_filter(self, test_user_repository: UserRepository):
         self._load_test_data()
 
-        users = test_user_repository.filter(
-            filters={
-                "username": "testusername_2",
+        filters_dict = {
+            "filters": {
+                "username": {
+                    "value": "testusername_2",
+                    "comparison_operator": ComparisonOperator.EQ,
+                }
             }
+        }
+        filters = QueryFilters.model_validate(filters_dict)
+
+        users = test_user_repository.filter(
+            filters=filters
         )
         assert len(users) == 1
         assert users[0].id == Id(value=2)

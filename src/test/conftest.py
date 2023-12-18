@@ -6,7 +6,17 @@ from sqlalchemy.orm import Session
 from infrastructure.persistance.models.permission import PermissionSQL
 from infrastructure.persistance.models.role import RoleSQL
 from infrastructure.persistance.models.user import UserSQL
-from test.fixtures.db import seed_db
+from infrastructure.persistance.base import Base
+
+
+def seed_db(test_session: Session, records: list[Base], bulk: bool = False):
+    if not bulk:
+        for record in records:
+            test_session.add(record)
+            test_session.commit()
+            test_session.refresh(record)
+    # TODO: implement bulk without commiting for each record.
+
 
 class BaseTestClass:
     def _load_permissions(self):
@@ -66,6 +76,8 @@ class BaseTestClass:
     @pytest.fixture(scope="function", autouse=True)
     def setup(self, test_session: Session):
         self.session = test_session
+
+
 
 
 def refactor(string: str) -> str:

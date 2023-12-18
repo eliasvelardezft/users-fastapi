@@ -18,6 +18,8 @@ pydantic = {extras = ["email"], version = "^2.5.2"}
 psycopg2-binary = "^2.9.9"
 httpx = "^0.25.2"
 ipdb = "^0.13.13"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 
 [build-system]

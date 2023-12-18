@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from typing import Any
 
+from pydantic import BaseModel
 from pydantic import BaseModel, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema

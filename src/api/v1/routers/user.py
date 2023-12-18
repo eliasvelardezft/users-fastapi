@@ -1,11 +1,73 @@
-from fastapi import APIRouter
+from dataclasses import asdict
 
-from api.v1.dtos.user import UserCreate, UserRead
+from fastapi import APIRouter, Depends
+import pydantic
 
+from api.v1.adapters.user import UserClientAdapter
+from api.v1.dtos.user import (
+    UserCreate,
+    UserRead,
+    UserUpdate,
+)
+from api.v1.dependencies.services import (
+    get_user_service,
+)
+from api.v1.dependencies.utils import (
+    get_query_filters,
+)
+from domain.models.value_objects import QueryFilters
+from domain.services.user import UserService
 
 router = APIRouter()
 
 
-@router.post("")
-def create_user(user: UserCreate):
-    return UserRead.model_dump(user)
+@router.post("", response_model=UserRead)
+def create_user(
+    user: UserCreate,
+    user_service: UserService = Depends(get_user_service)
+):
+    domain_user = UserClientAdapter.client_to_domain(user)
+    created_user = user_service.create_user(domain_user)
+    return UserClientAdapter.domain_to_client(created_user)
+
+
+@router.get("", response_model=list[UserRead])
+def get_users(
+    query_filters: QueryFilters = Depends(get_query_filters),
+    user_service: UserService = Depends(get_user_service)
+):
+    users = user_service.get_users(query_filters)
+    return [UserClientAdapter.domain_to_client(user) for user in users]
+
+
+@router.get("/{user_id}", response_model=UserRead)
+def get_user(
+    user_id: int,
+    user_service: UserService = Depends(get_user_service)
+):
+    user = user_service.get_user(user_id)
+    return UserClientAdapter.domain_to_client(user)
+
+
+@router.patch("/{user_id}", response_model=UserRead)
+def update_user(
+    user_id: int,
+    user_update: UserUpdate,
+    user_service: UserService = Depends(get_user_service)
+):
+    user = user_service.get_user(user_id)
+    updated_domain_user = UserClientAdapter.update_to_domain(
+        user=user,
+        user_update=user_update,
+    )
+    updated_user = user_service.update_user(user_id, updated_domain_user)
+    return UserClientAdapter.domain_to_client(updated_user)
+
+
+@router.delete("/{user_id}")
+def delete_user(
+    user_id: int,
+    user_service: UserService = Depends(get_user_service)
+):
+    user_service.delete_user(user_id)
+    return {"message": "User deleted successfully"}
