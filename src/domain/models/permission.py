@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from .value_objects import Name, Id, Description
+from pydantic import BaseModel
+
+from .value_objects import Name, Id, Description, ComparisonFieldFilter, RangeFieldFilter
 
 
 @dataclass(kw_only=True)

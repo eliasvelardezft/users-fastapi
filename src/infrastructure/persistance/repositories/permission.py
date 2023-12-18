@@ -1,11 +1,15 @@
+from dataclasses import asdict
 from typing import Any
+from datetime import datetime
 
 from psycopg2 import errors
+from sqlalchemy import inspect
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from domain.interfaces.repository import IRepository
 from domain.models.permission import Permission
+from domain.models.value_objects import QueryFilters, ComparisonFieldFilter, RangeFieldFilter
 from domain.exceptions import InvalidFilter
 from infrastructure.persistance.adapters.permission import PermissionPersistanceAdapter
 from infrastructure.persistance.models import PermissionSQL
@@ -22,20 +26,30 @@ class PermissionRepository(IRepository):
             permission = PermissionPersistanceAdapter.persistance_to_domain(db_permission)
         return permission
 
-    def filter(self, filters: dict[str, Any] = {}) -> list[Permission]:
+    def filter(self, filters: QueryFilters | None = {}) -> list[Permission]:
         query = self.session.query(PermissionSQL)
-        for key, value in filters.items():
-            try:
-                if key == "role":
-                    query = query.join(PermissionSQL.roles)
-                    for k, v in value.items():
-                        query = query.filter(
-                            getattr(PermissionSQL.roles.property.mapper.class_, k) == v
-                        )
-                else:
-                    query = query.filter(getattr(PermissionSQL, key) == value)
-            except Exception as e:
-                raise InvalidFilter(f"Invalid filter: {key}={value}")
+        if filters:
+            for key, value in filters.filters.items():
+                try:
+                    if key == "role":
+                        query = query.join(PermissionSQL.roles)
+                        for k, v in value.items():
+                            query = query.filter(
+                                getattr(PermissionSQL.roles.property.mapper.class_, k) == v
+                            )
+                    else:
+                        if isinstance(value, ComparisonFieldFilter):
+                            query = query.filter(
+                                getattr(PermissionSQL, key).op(value.comparison_operator)(value.value)
+                            )
+                        elif isinstance(value, RangeFieldFilter):
+                            query = query.filter(
+                                getattr(PermissionSQL, key).between(value.start, value.end)
+                            )
+                        else:
+                            query = query.filter(getattr(PermissionSQL, key) == value)
+                except Exception as e:
+                    raise InvalidFilter(f"Invalid filter: {key}={value}")
         db_permissions = query.all()
         permissions = [PermissionPersistanceAdapter.persistance_to_domain(permission) for permission in db_permissions]
         return permissions
@@ -82,3 +96,28 @@ class PermissionRepository(IRepository):
             for permission in db_permissions
         ]
         return permissions
+
+    def update(self, id: str, data: Permission) -> Permission:
+        db_permission = self.session.get(PermissionSQL, id)
+        
+        if db_permission:
+            data = PermissionPersistanceAdapter.domain_to_persistance(data)
+            data_dict = {
+                c.key: getattr(data, c.key) 
+                for c in inspect(data).mapper.column_attrs
+                if getattr(data, c.key) is not None
+            }
+
+            for key, value in data_dict.items():
+                setattr(db_permission, key, value)
+            self.session.commit()
+            permission = PermissionPersistanceAdapter.persistance_to_domain(db_permission)
+            return permission
+        else:
+            raise Exception("Permission not found")
+
+    def delete(self, id: int) -> None:
+        db_permission = self.session.get(PermissionSQL, id)
+        if db_permission and not db_permission.deleted_date:
+            db_permission.deleted_date = datetime.now()
+            self.session.commit()
