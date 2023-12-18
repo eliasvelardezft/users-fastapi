@@ -56,18 +56,11 @@ def update_user(
     user_service: UserService = Depends(get_user_service)
 ):
     user = user_service.get_user(user_id)
-    for field, value in user_update.model_dump().items():
-        if (
-            isinstance(value, pydantic.BaseModel) and
-            getattr(value, 'value') is not None
-        ):
-            setattr(user_update, field, value.value)
-        else:
-            setattr(user_update, field, value)
-
-
-    domain_user = UserClientAdapter.client_to_domain(user_update)
-    updated_user = user_service.update_user(user_id, domain_user)
+    updated_domain_user = UserClientAdapter.update_to_domain(
+        user=user,
+        user_update=user_update,
+    )
+    updated_user = user_service.update_user(user_id, updated_domain_user)
     return UserClientAdapter.domain_to_client(updated_user)
 
 

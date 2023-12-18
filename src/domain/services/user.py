@@ -30,6 +30,9 @@ class UserService:
         return self.repository.get(id=id)
 
     def update_user(self, id: str, user: User) -> User:
+        if user.password:
+            hashed_password = self.hash_service.get_hash(user.password.value)
+            user.password = Password(value=hashed_password)
         return self.repository.update(id=id, data=user)
 
     def delete_user(self, id: str) -> Any:
