@@ -21,9 +21,9 @@ class RoleRepository(IRepository):
     def get(self, id: str) -> Role | None:
         db_role = self.session.get(RoleSQL, id)
         role = None
-        if db_role:
+        if db_role and not db_role.deleted_date:
             role = RolePersistanceAdapter.persistance_to_domain(db_role)
-        return role
+            return role
 
     def filter(self, filters: QueryFilters | None = {}) -> list[Role]:
         query = self.session.query(RoleSQL)
