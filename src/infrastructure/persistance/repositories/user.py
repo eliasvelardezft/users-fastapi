@@ -21,9 +21,9 @@ class UserRepository(IRepository):
     def get(self, id: str) -> User | None:
         db_user = self.session.get(UserSQL, id)
         user = None
-        if db_user:
+        if db_user and not db_user.deleted_date:
             user = UserPersistanceAdapter.persistance_to_domain(db_user)
-        return user
+            return user
 
     def filter(self, filters: QueryFilters | None = {}) -> list[User]:
         query = self.session.query(UserSQL)
@@ -85,13 +85,12 @@ class UserRepository(IRepository):
         db_user = self.session.get(UserSQL, id)
         
         if db_user:
-            data = UserPersistanceAdapter.domain_to_persistance(data)
+            persistance_data = UserPersistanceAdapter.domain_to_persistance(data)
             data_dict = {
-                c.key: getattr(data, c.key) 
-                for c in inspect(data).mapper.column_attrs
-                if getattr(data, c.key) is not None
+                c.key: getattr(persistance_data, c.key) 
+                for c in inspect(db_user).mapper.column_attrs
+                if getattr(persistance_data, c.key) is not None
             }
-
             for key, value in data_dict.items():
                 setattr(db_user, key, value)
             self.session.commit()
