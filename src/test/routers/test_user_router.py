@@ -113,3 +113,6 @@ class TestUserRouter(BaseTestClass):
 
         response = client.delete(f"{self.base_url}/1")
         assert response.status_code == 200
+
+        response = client.get(f"{self.base_url}/1")
+        assert response.status_code == 404
