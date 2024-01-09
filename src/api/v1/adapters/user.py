@@ -1,7 +1,7 @@
 from domain.interfaces.adapters.client_adapter import IClientAdapter
 from domain.models.user import User
 from domain.models.value_objects import Email, Password, Username, Id
-from api.v1.dtos.user import UserCreate, UserRead
+from api.v1.dtos.user import UserCreate, UserRead, UserUpdate
 
 class UserClientAdapter(IClientAdapter):
     @staticmethod
