@@ -22,9 +22,9 @@ class PermissionRepository(IRepository):
     def get(self, id: str) -> Permission | None:
         db_permission = self.session.get(PermissionSQL, id)
         permission = None
-        if db_permission:
+        if db_permission and not db_permission.deleted_date:
             permission = PermissionPersistanceAdapter.persistance_to_domain(db_permission)
-        return permission
+            return permission
 
     def filter(self, filters: QueryFilters | None = {}) -> list[Permission]:
         query = self.session.query(PermissionSQL)

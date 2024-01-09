@@ -3,7 +3,6 @@ from domain.models.user import User
 from domain.models.value_objects import Email, Password, Username, Id
 from api.v1.dtos.user import UserCreate, UserRead, UserUpdate
 
-
 class UserClientAdapter(IClientAdapter):
     @staticmethod
     def client_to_domain(user: UserCreate) -> User:
@@ -27,9 +26,25 @@ class UserClientAdapter(IClientAdapter):
         )
 
     @staticmethod
-    def update_to_domain(user: User, user_update: UserUpdate) -> User:
-        user.username = Username(value=user_update.username) if user_update.username else user.username
-        user.password = Password(value=user_update.password) if user_update.password else user.password
-        user.email = Email(value=user_update.email) if user_update.email else user.email
-        user.active = user_update.active if user_update.active is not None else user.active
-        return user
+    def update_to_domain(user: User, update_data: dict) -> User:
+        username = update_data.get("username", user.username.value)
+        password = update_data.get("password", user.password.value)
+        email = update_data.get("email", user.email.value)
+        role_ids = [
+            Id(value=role_id)
+            for role_id
+            in update_data.get(
+                "role_ids",
+                [role_id.value for role_id in user.role_ids]
+            )
+        ]
+        return User(
+            id=user.id,
+            username=Username(value=username),
+            password=Password(value=password),
+            email=Email(value=email),
+            role_ids=role_ids,
+            created_date=user.created_date,
+            updated_date=user.updated_date,
+            deleted_date=user.deleted_date,
+        )
